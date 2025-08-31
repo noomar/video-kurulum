@@ -1,1 +1,1 @@
-# video-kurulum
+# kısavideo oluştur
