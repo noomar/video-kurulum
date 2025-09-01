@@ -1,1 +1,1 @@
-https://noomar.github.io/video-kurulum/
+video kurulum
