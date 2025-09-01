@@ -1,1 +1,1 @@
-# kısavideo oluştur
+https://noomar.github.io/video-kurulum/
