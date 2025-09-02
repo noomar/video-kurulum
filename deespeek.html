@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek Benzeri Yapay Zeka</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #4f46e5;
+            --accent: #7c3aed;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --gradient: linear-gradient(135deg, #2563eb, #4f46e5, #7c3aed);
+        }
+        
+        body {
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: var(--gradient);
+            color: white;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo i {
+            color: var(--light);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: white;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .container {
+            display: flex;
+            flex: 1;
+        }
+        
+        .sidebar {
+            width: 260px;
+            background: white;
+            border-right: 1px solid var(--light-gray);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .new-chat-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .new-chat-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .chat-history-item {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+        }
+        
+        .chat-history-item:hover {
+            background: var(--light-gray);
+        }
+        
+        .chat-history-item.active {
+            background: var(--light-gray);
+            font-weight: 500;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 16px;
+            border-radius: 12px;
+            line-height: 1.6;
+        }
+        
+        .user-message {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .ai-message {
+            background: var(--light-gray);
+            color: var(--dark);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid var(--light-gray);
+            background: white;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 12px;
+            background: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        #userInput {
+            flex: 1;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            resize: none;
+            height: 60px;
+            outline: none;
+        }
+        
+        #sendBtn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            align-self: flex-end;
+            transition: background 0.3s;
+        }
+        
+        #sendBtn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .footer {
+            background: white;
+            padding: 15px 5%;
+            text-align: center;
+            border-top: 1px solid var(--light-gray);
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .model-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .model-badge {
+            background: var(--light-gray);
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+        
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px;
+            color: var(--gray);
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gray);
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typingAnimation {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-brain"></i>
+            <span>DeepSeek</span>
+        </div>
+        
+        <nav class="nav-links">
+            <a href="#">Ana Sayfa</a>
+            <a href="#">Modeller</a>
+            <a href="#">API</a>
+            <a href="#">Dökümantasyon</a>
+            <a href="#">Topluluk</a>
+        </nav>
+        
+        <div class="auth-buttons">
+            <button class="btn btn-outline">Giriş Yap</button>
+            <button class="btn btn-primary">Kayıt Ol</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar">
+            <button class="new-chat-btn">
+                <i class="fas fa-plus"></i>
+                Yeni Sohbet
+            </button>
+            
+            <div class="chat-history">
+                <div class="chat-history-item active">
+                    <i class="fas fa-comment"></i>
+                    <span>Yeni Konuşma</span>
+                </div>
+                <div class="chat-history-item">
+                    <i class="fas fa-comment"></i>
+                    <span>Python Kod Yardımı</span>
+                </div>
+                <div class="chat-history-item">
+                    <i class="fas fa-comment"></i>
+                    <span>Tarih Araştırması</span>
+                </div>
+                <div class="chat-history-item">
+                    <i class="fas fa-comment"></i>
+                    <span>Matematik Problemleri</span>
+                </div>
+                <div class="chat-history-item">
+                    <i class="fas fa-comment"></i>
+                    <span>Yazılım Geliştirme</span>
+                </div>
+            </div>
+        </aside>
+        
+        <main class="main-content">
+            <div class="chat-container" id="chatContainer">
+                <div class="message ai-message">
+                    <div class="message-header">
+                        <i class="fas fa-robot"></i>
+                        <span>DeepSeek</span>
+                    </div>
+                    <p>Merhaba! Ben DeepSeek, size nasıl yardımcı olabilirim? Sorularınızı cevaplamak, kod yazmak, metin oluşturmak ve daha birçok konuda destek sunabilirim.</p>
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <div class="input-container">
+                    <textarea id="userInput" placeholder="DeepSeek'e soru sorun..."></textarea>
+                    <button id="sendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>DeepSeek - Herkes için gelişmiş yapay zeka</p>
+        <div class="model-info">
+            <span class="model-badge">DeepSeek LLM v2</span>
+            <span>•</span>
+            <span>128K bağlam penceresi</span>
+            <span>•</span>
+            <span>Türkçe ve çok dilli destek</span>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatContainer = document.getElementById('chatContainer');
+            const userInput = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
+            
+            // Yapay zeka yanıtları veritabanı
+            const aiKnowledge = {
+                'merhaba': 'Merhaba! Size nasıl yardımcı olabilirim?',
+                'nasılsın': 'Ben bir yapay zeka modeliyim, ama sorduğunuz için teşekkürler! Size nasıl yardımcı olabilirim?',
+                'teşekkür': 'Rica ederim! Başka nasıl yardımcı olabilirim?',
+                'ne yapabilirsin': 'Metin oluşturabilir, sorularınızı cevaplayabilir, kod yazabilir, çeviri yapabilir, özet çıkarabilir ve çok daha fazlasını yapabilirim. Bana ne yapmamı istediğinizi söyleyin!',
+                'deepseek': 'DeepSeek, gelişmiş doğal dil işleme yeteneklerine sahip bir yapay zeka modelidir. Çeşitli konularda soruları yanıtlayabilir, metin üretebilir ve birçok dilde iletişim kurabilir.',
+                'ücretsiz mi': 'Evet, DeepSeek'in temel özellikleri tamamen ücretsizdir!',
+                'kod yaz': 'Hangi programlama diliyle ve ne tür bir kod yazmamı istiyorsunuz?',
+                'yardım': 'Size nasıl yardımcı olabilirim? Sorularınızı cevaplayabilir, konular hakkında bilgi verebilir, metin oluşturabilir veya kod yazabilirim.'
+            };
+            
+            sendBtn.addEventListener('click', function() {
+                sendMessage();
+            });
+            
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message === '') return;
+                
+                // Kullanıcı mesajını ekle
+                addMessage(message, 'user');
+                userInput.value = '';
+                
+                // Yapay zekanın cevap vermesi için biraz bekle
+                setTimeout(() => {
+                    // Yazıyor animasyonu
+                    const typingIndicator = document.createElement('div');
+                    typingIndicator.className = 'typing-indicator';
+                    typingIndicator.innerHTML = `
+                        <span>DeepSeek yazıyor</span>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    `;
+                    chatContainer.appendChild(typingIndicator);
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                    
+                    // Yanıtı hazırla ve göster
+                    setTimeout(() => {
+                        chatContainer.removeChild(typingIndicator);
+                        const response = generateAIResponse(message);
+                        addMessage(response, 'ai');
+                    }, 1500);
+                }, 500);
+            }
+            
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
+                
+                const messageHeader = document.createElement('div');
+                messageHeader.className = 'message-header';
+                
+                if (sender === 'user') {
+                    messageHeader.innerHTML = `<i class="fas fa-user"></i><span>Siz</span>`;
+                } else {
+                    messageHeader.innerHTML = `<i class="fas fa-robot"></i><span>DeepSeek</span>`;
+                }
+                
+                const messageContent = document.createElement('p');
+                messageContent.textContent = text;
+                
+                messageDiv.appendChild(messageHeader);
+                messageDiv.appendChild(messageContent);
+                
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            function generateAIResponse(message) {
+                const lowerMessage = message.toLowerCase();
+                
+                // Önceden tanımlanmış yanıtları kontrol et
+                for (const [key, value] of Object.entries(aiKnowledge)) {
+                    if (lowerMessage.includes(key)) {
+                        return value;
+                    }
+                }
+                
+                // Rastgele yanıtlar
+                const randomResponses = [
+                    "İlginç bir soru! Bununla ilgili daha fazla bilgi verebilirim.",
+                    "Bu konuda size nasıl yardımcı olabilirim?",
+                    "Biraz daha detay verebilir misiniz?",
+                    "Bu konu hakkında daha fazla bilgi toplamak için verilerimi güncelliyorum.",
+                    "DeepSeek olarak sürekli öğreniyor ve gelişiyorum.",
+                    "Size en iyi şekilde yardımcı olabilmem için sorunuzu biraz daha açabilir misiniz?",
+                    "Bu sorunuzu öğrenme veritabanıma ekliyorum, teşekkürler!",
+                    "Açık kaynaklı bir proje olduğum için topluluk katkılarıyla sürekli gelişiyorum."
+                ];
+                
+                return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+            }
+        });
+    </script>
+</body>
+</html>
